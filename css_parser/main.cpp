@@ -18,8 +18,8 @@ int stoi(MyString& str) {
 
 int main() {
     List<Block> css;
-    int c;
     while (true) {
+        int c;
         if (!parse_css(css)) {
             // Got EOF
             break;
@@ -82,6 +82,7 @@ int main() {
                                 }
                             }
                         } else if (third_arg == "?") {
+                            // interpreting i,S,? command
                             block_number--;
                             if (block_number < css.getLength()) {
                                 const List<Selector>& sels = css[block_number].selector_list;
@@ -90,6 +91,7 @@ int main() {
                         }
                     } else {
                         if (third_arg == "?") {
+                            // interpreting z,S,?
                             MyString selector_name = move(first_arg);
                             MyIterator<Block> block_iter = css.getFrontIterator();
                             int sel_occurs = 0;

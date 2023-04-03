@@ -68,8 +68,9 @@ bool MyString::getline() {
     delete[] this->str;
     char* temp = new char[this->capacity];
     int i = 0;
-    char c;
-    while (c = getchar()) {
+    int c;
+    while (true) {
+        c = getchar();
         if (c == '\n') {
             temp[i] = '\0';
             this->length = i;
@@ -83,7 +84,7 @@ bool MyString::getline() {
             return false;
         }
         else {
-            temp[i] = c;
+            temp[i] = (char) c;
         }
         i++;
     }
@@ -91,9 +92,9 @@ bool MyString::getline() {
     return false;
 }
 
-MyString MyString::operator+(const MyString& s2)
+MyString MyString::operator+(const MyString& s2) const
 {
-    MyString& s1 = *this;
+    const MyString& s1 = *this;
     MyString temp(2*(s1.length + s2.length) + 1);
     strcpy_s(temp.str, temp.capacity, s1.str);
     strcat_s(temp.str, temp.capacity, s2.str);
@@ -101,9 +102,9 @@ MyString MyString::operator+(const MyString& s2)
     return temp;
 }
 
-MyString MyString::operator+(const char *s2)
+MyString MyString::operator+(const char *s2) const
 {
-    MyString& s1 = *this;
+    const MyString& s1 = *this;
     int s2_len = strlen(s2);
     MyString temp(2*(s1.length + s2_len) + 1);
     strcpy_s(temp.str, temp.capacity, s1.str);
@@ -217,18 +218,13 @@ MyString& MyString::operator=(MyString&& right) {
     return *this;
 }
 
-char MyString::operator[](int i) 
+char MyString::operator[](int i) const
 { 
     return str[i]; 
 }
 
-int MyString::getLength() 
+int MyString::getLength() const
 { 
     return length; 
-}
-
-int MyString::getCapacity() 
-{ 
-    return capacity; 
 }
 

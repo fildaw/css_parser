@@ -34,14 +34,14 @@ List<Selector> List<Selector>::parse(MyString& buffer) {
 
 ostream& operator<<(ostream& os, const List<Selector>& l) {
     os << "SelectorList [ ";
-    Node<Selector> *l_ptr = (Node<Selector>*) l.first;
+    Node<Selector> *l_ptr = static_cast<Node<Selector>*> (l.first);
     while (l_ptr != nullptr) {
         for (int i = 0; i < PACK; i++) {
             Element<Selector>& curr_el = l_ptr->elements[i];
             if (!curr_el.empty)
                 os << l_ptr->elements[i].value << " ";
         }
-        l_ptr = (Node<Selector>*) l_ptr->next;
+        l_ptr = static_cast<Node<Selector>*> (l_ptr->next);
     }
     os << "]";
     return os;
@@ -49,14 +49,14 @@ ostream& operator<<(ostream& os, const List<Selector>& l) {
 
 ostream& operator<<(ostream& os, const List<Attribute>& l) {
     os << "AttributeList [ ";
-    Node<Attribute> *l_ptr = (Node<Attribute>*) l.first;
+    Node<Attribute> *l_ptr = static_cast<Node<Attribute>*> (l.first);
     while (l_ptr != nullptr) {
         for (int i = 0; i < PACK; i++) {
             Element<Attribute>& curr_el = l_ptr->elements[i];
             if (!curr_el.empty)
                 os << l_ptr->elements[i].value << " ";
         }
-        l_ptr = (Node<Attribute>*) l_ptr->next;
+        l_ptr = static_cast<Node<Attribute>*> (l_ptr->next);
     }
     os << "]";
     return os;

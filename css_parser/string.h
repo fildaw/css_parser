@@ -11,12 +11,12 @@ class MyString {
     public:
         MyString(const MyString& s);
         MyString(const char *s);
-        MyString(int capacity);
+        explicit MyString(int capacity);
         MyString(MyString&& orig);
         ~MyString();
 
-        MyString operator+(const MyString& s2);
-        MyString operator+(const char *s2);
+        MyString operator+(const MyString& s2) const;
+        MyString operator+(const char *s2) const;
         bool operator==(const MyString& s2) const;
         bool operator==(const char *s2) const;
         MyString& operator+=(const MyString& s2);
@@ -25,9 +25,8 @@ class MyString {
         MyString& operator=(MyString&& right);
         MyString& operator=(const MyString& s2);
         MyString& operator=(const char *s2);
-        char operator[](int i);
-        int getLength();
-        int getCapacity();
+        char operator[](int i) const;
+        int getLength() const;
         bool getline();
 
     friend ostream& operator<<(ostream& os, const MyString& s);

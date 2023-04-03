@@ -1,6 +1,6 @@
 #include "css_types.h"
 
-#define PACK 5
+#define PACK 4
 
 template<class T>
 class Element {
@@ -31,6 +31,7 @@ class MyIterator {
         int pos_in_pack;
     public:
         MyIterator(Node<T>* start_node);
+        MyIterator(Node<T>* start_node, int init_pos_in_pack);
         T& next();
         T& prev();
         bool is_next();
@@ -39,6 +40,11 @@ class MyIterator {
 
 template<class T>
 MyIterator<T>::MyIterator(Node<T>* start_node) : current_node(start_node), pos_in_pack(-1) 
+{
+}
+
+template<class T>
+MyIterator<T>::MyIterator(Node<T>* start_node, int init_pos_in_pack) : current_node(start_node), pos_in_pack(init_pos_in_pack)
 {
 }
 
@@ -70,9 +76,6 @@ T& MyIterator<T>::prev() {
     T& start = this->current_node->elements[this->pos_in_pack].value;
     Node<T> *curr = this->current_node;
     int pos = this->pos_in_pack;
-    if (pos == -1) {
-        pos = PACK;
-    }
     pos--;
     while (curr != nullptr) {
         while (pos >= 0) {
@@ -114,9 +117,6 @@ template<class T>
 bool MyIterator<T>::is_prev() {
     Node<T> *curr = this->current_node;
     int pos = this->pos_in_pack;
-    if (pos == -1) {
-        pos = PACK;
-    }
     pos--;
     while (curr != nullptr) {
         while (pos >= 0) {
@@ -146,7 +146,7 @@ public:
     bool remove(T& value);
     int getLength() const;
     static List<T> parse(MyString& buffer);
-    List<T>& operator=(const List<T>& s2);
+    List<T>& operator=(const List<T>& l2);
     const T& operator[](int i) const;
     T& get(int i);
     T getValue();
@@ -164,7 +164,7 @@ MyIterator<T> List<T>::getFrontIterator() const {
 
 template <class T>
 MyIterator<T> List<T>::getBackIterator() const {
-    return MyIterator<T>(last);
+    return MyIterator<T>(last, PACK);
 }
 
 template <class T>
@@ -316,12 +316,12 @@ int List<T>::getLength() const {
 template <class T>
 List<T>::List()
 {
-    Node<T> *first = new Node<T>();
-    first->next = nullptr;
-    first->prev = nullptr;
+    Node<T> *_first = new Node<T>();
+    _first->next = nullptr;
+    _first->prev = nullptr;
     this->length = 0;
-    this->first = first;
-    this->last = first;
+    this->first = _first;
+    this->last = _first;
 }
 
 template <class T>
@@ -338,47 +338,38 @@ void List<T>::add(T&& value)
         first = new Node<T>();
         first->next = nullptr;
         first->prev = nullptr;
+        last = first;
     }
 
-    this->length++;
     Node<T> *curr = first;
-    while (curr->next != nullptr) {
+    Node<T>* prev = curr->prev;
+    while (curr != nullptr) {
         for (int k = 0; k < PACK; k++) {
             Element<T>& curr_el = curr->elements[k];
             if (curr_el.empty) {
                 curr_el.value = move(value);
                 curr_el.empty = false;
+                this->length++;
                 return;
             }
             else if (curr_el.value == value) {
                 curr_el.value = move(value);
                 curr_el.empty = false;
-                this->length--; // We are replacing, so length shouldn't be modified
+                // We are replacing, so length shouldn't be modified
                 return;
             }
         }
+        prev = curr;
         curr = curr->next;
-    }
-    for (int k = 0; k < PACK; k++) {
-        Element<T>& curr_el = curr->elements[k];
-        if (curr_el.empty) {
-            curr_el.value = move(value);
-            curr_el.empty = false;
-            return;
-        } else if (curr_el.value == value) {
-            curr_el.value = move(value);
-            curr_el.empty = false;
-            this->length--; // We are replacing, so length shouldn't be modified
-            return;
-        }
     }
     Node<T> *new_node = new Node<T>();
     new_node->elements[0].value = move(value);
     new_node->elements[0].empty = false;
     new_node->next = nullptr;
-    new_node->prev = curr;
-    curr->next = new_node;
+    new_node->prev = prev;
+    prev->next = new_node;
     this->last = new_node;
+    this->length++;
 }
 
 template <class T>

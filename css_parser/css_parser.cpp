@@ -64,7 +64,7 @@ bool parse_css(List<Block>& block_list)
             selector_list = List<Selector>();
             buffer = "";
         } else {
-            if (c != '\n' && c > 31) {
+            if (c > 31) {
                 if (c == '?' && getchar() == '?' && getchar() == '?' && getchar() == '?') {
                     // Captured four '?', assuming end of css parsing and beginning of command section
                     return true;

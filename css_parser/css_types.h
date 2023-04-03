@@ -7,7 +7,7 @@ class Selector {
         Selector(Selector&& orig);
         Selector(MyString&& selector_name);
         Selector& operator=(Selector&& right);
-        bool operator==(const Selector& s2);
+        bool operator==(const Selector& s2) const;
         const MyString& getName() const;
     friend ostream& operator<<(ostream& os, const Selector& s);
 };
@@ -20,7 +20,7 @@ class Attribute {
         Attribute();
         Attribute(Attribute&& orig);
         Attribute& operator=(Attribute&& right);
-        bool operator==(const Attribute& a2);
+        bool operator==(const Attribute& a2) const;
         static Attribute parse(MyString& attribute);
         const MyString& getName() const;
         const MyString& getValue() const;

@@ -18,7 +18,7 @@ Selector& Selector::operator=(Selector&& right) {
     return *this;
 }
 
-bool Selector::operator==(const Selector& s2) {
+bool Selector::operator==(const Selector& s2) const {
     return this->selector_name == s2.selector_name;
 }
 
@@ -46,7 +46,7 @@ ostream& operator<<(ostream& os, const Selector& s) {
     return os;
 }
 
-Attribute::Attribute(Attribute&& orig) : attribute_name(move(attribute_name)), attribute_value(move(attribute_value)) {
+Attribute::Attribute(Attribute&& orig) : attribute_name(move(orig.attribute_name)), attribute_value(move(orig.attribute_value)) {
 }
 
 
@@ -58,7 +58,7 @@ Attribute::Attribute() : attribute_name(""), attribute_value("")
 {
 }
 
-bool Attribute::operator==(const Attribute& a2) {
+bool Attribute::operator==(const Attribute& a2) const {
     return this->attribute_name == a2.attribute_name;
 }
 
