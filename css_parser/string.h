@@ -31,5 +31,5 @@ class MyString {
         bool getline();
 
     friend ostream& operator<<(ostream& os, const MyString& s);
-    friend istream& operator>>(istream& is, MyString& s);
+    //friend istream& operator>>(istream& is, MyString& s);
 };

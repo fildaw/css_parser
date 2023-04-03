@@ -1,6 +1,6 @@
 #include "css_types.h"
 
-#define PACK 3
+#define PACK 5
 
 template<class T>
 class Element {

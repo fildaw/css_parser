@@ -19,8 +19,7 @@ int stoi(MyString& str) {
 int main() {
     List<Block> css;
     int c;
-    while ((c = getchar()) != EOF) {
-        ungetc(c, stdin);
+    while (true) {
         if (!parse_css(css)) {
             // Got EOF
             break;
@@ -31,20 +30,12 @@ int main() {
         }
         bool command_parsing_mode = true;
         while (command_parsing_mode) {
-            MyString command(200);
+            MyString command(100);
             if (!command.getline()) {
                 if (command.getLength() == 0 && command == "") {
                     return 0;
                 }
             }
-            //cout << command << endl;
-            /*if (command == "25,A,?") {
-                cout << css[24] << endl;
-            }*/
-            /*cout << command << endl;
-            for (int i = 0; i < css.getLength(); i++) {
-                cout << css[i] << endl;
-            }*/
             if (command == "?") {
                 // CSS sections count
                 cout << "? == " << css.getLength() << endl;
@@ -55,7 +46,7 @@ int main() {
                 command_parsing_mode = false;
             } else {
                 int i = 0;
-                MyString first_arg(200);
+                MyString first_arg(100);
                 bool got_comma = false;
                 for (;i < command.getLength() && !got_comma; i++) {
                     if (command[i] == ',') {
@@ -124,7 +115,6 @@ int main() {
                         if (third_arg == "?") {
                             // Interpreting i,A,? command
                             block_number--;
-                            //cout << "using block number: " << block_number << endl;
                             if (block_number < css.getLength()) {
                                 cout << command << " == " << css[block_number].attribute_list.getLength() << endl;
                             }

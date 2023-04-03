@@ -16,7 +16,6 @@ class Attribute {
     MyString attribute_name;
     MyString attribute_value;
     public:
-        //Attribute(MyString attribute_name, MyString attribute_value);
         Attribute(MyString&& attribute_name, MyString&& attribute_value);
         Attribute();
         Attribute(Attribute&& orig);

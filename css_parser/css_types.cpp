@@ -20,7 +20,6 @@ Selector& Selector::operator=(Selector&& right) {
 
 bool Selector::operator==(const Selector& s2) {
     return this->selector_name == s2.selector_name;
-    //return false;
 }
 
 const MyString& Selector::getName() const {
@@ -76,8 +75,8 @@ Attribute Attribute::parse(MyString& attribute)
     while ((attribute[j] == ' ' || attribute[j] == '\t') && j >= 0) {
         j--;
     }
-    MyString attribute_name(100);
-    MyString attribute_value(100);
+    MyString attribute_name(50);
+    MyString attribute_value(50);
     while (attribute[i] != ':' && i <= j) {
         // Skip whitespaces inside param
         while ((attribute[i] == ' ' || attribute[i] == '\t') && i < attribute.getLength()) {

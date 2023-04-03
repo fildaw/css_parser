@@ -49,7 +49,7 @@ ostream& operator<<(ostream& os, const MyString& s)
     return os;
 }
 
-istream& operator>>(istream& is, MyString& s)
+/*istream& operator>>(istream& is, MyString& s)
 {
     char *temp = new char[s.capacity];
     is >> temp;
@@ -62,7 +62,7 @@ istream& operator>>(istream& is, MyString& s)
     }
     delete[] temp;
     return is;
-}
+}*/
 
 bool MyString::getline() {
     delete[] this->str;
@@ -231,22 +231,4 @@ int MyString::getCapacity()
 { 
     return capacity; 
 }
-
-/*int main() {
-    MyString dd = "";
-
-    for (int i = 0; i < 100; i++) {
-        dd += "Hello";
-    }
-    cout << dd << endl;
-    dd = "uu";
-    cout << dd << endl;
-
-    MyString ff = "tr";
-    ff = "HelloWorld";
-    cout << ff << endl;
-    cout << ff.getLength() << endl;
-    cout << ff[4] << endl;
-    return 0;
-}*/
 
