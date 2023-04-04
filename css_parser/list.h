@@ -7,11 +7,12 @@ class Element {
     public:
         T value;
         bool empty;
+        bool deleted;
         Element();
 };
 
 template<class T>
-Element<T>::Element() : value(T()), empty(true) 
+Element<T>::Element() : value(T()), empty(true), deleted(false)
 {
 }
 
@@ -56,7 +57,7 @@ T& MyIterator<T>::next() {
     pos++;
     while (curr != nullptr) {
         while (pos < PACK) {
-            if (!(curr->elements[pos].empty)) {
+            if (!(curr->elements[pos].empty) && !(curr->elements[pos].deleted)) {
                 // If found, update iterator data
                 this->pos_in_pack = pos;
                 this->current_node = curr;
@@ -79,7 +80,7 @@ T& MyIterator<T>::prev() {
     pos--;
     while (curr != nullptr) {
         while (pos >= 0) {
-            if (!(curr->elements[pos].empty)) {
+            if (!(curr->elements[pos].empty) && !(curr->elements[pos].deleted)) {
                 // If found, update iterator data
                 this->pos_in_pack = pos;
                 this->current_node = curr;
@@ -101,7 +102,7 @@ bool MyIterator<T>::is_next() {
     pos++;
     while (curr != nullptr) {
         while (pos < PACK) {
-            if (!(curr->elements[pos].empty)) {
+            if (!(curr->elements[pos].empty) && !(curr->elements[pos].deleted)) {
                 // Found
                 return true;
             }
@@ -120,7 +121,7 @@ bool MyIterator<T>::is_prev() {
     pos--;
     while (curr != nullptr) {
         while (pos >= 0) {
-            if (!(curr->elements[pos].empty)) {
+            if (!(curr->elements[pos].empty) && !(curr->elements[pos].deleted)) {
                 // Found
                 return true;
             }
@@ -175,7 +176,7 @@ const T& List<T>::operator[](int i) const
     while (curr != nullptr) {
         for (int k = 0; k < PACK; k++) {
             Element<T>& curr_el = curr->elements[k];
-            if (curr_el.empty) {
+            if (curr_el.deleted) {
                 continue;
             }
             if (j == i) {
@@ -195,7 +196,7 @@ T& List<T>::get(int i) {
     while (curr != nullptr) {
         for (int k = 0; k < PACK; k++) {
             Element<T>& curr_el = curr->elements[k];
-            if (curr_el.empty) {
+            if (curr_el.deleted) {
                 continue;
             }
             if (j == i) {
@@ -218,25 +219,25 @@ void List<T>::remove(int i) {
     Node<T> *curr = first;
     bool found = false;
     while (curr != nullptr && !found) {
-        bool empty_node = true;
+        bool deleted_node = true;
         for (int k = 0; k < PACK; k++) {
             Element<T>& curr_el = curr->elements[k];
-            if (curr_el.empty) {
+            if (curr_el.deleted) {
                 continue;
             }
             if (j == i) {
                 // Found element to delete, mark it as empty
-                curr_el.empty = true;
+                curr_el.deleted = true;
                 found = true;
                 this->length--;
             }
-            if (!curr_el.empty) {
-                empty_node = false;
+            if (!curr_el.deleted) {
+                deleted_node = false;
             }
             j++;
         }
-        if (empty_node) {
-            // Whole node is empty
+        if (deleted_node) {
+            // Whole node is deleted
             Node<T>* prev = curr->prev;
             Node<T>* next = curr->next;
             if (prev != nullptr) {
@@ -267,24 +268,24 @@ bool List<T>::remove(T& value) {
     Node<T> *curr = first;
     bool found = false;
     while (curr != nullptr && !found) {
-        bool empty_node = true;
+        bool deleted_node = true;
         for (int k = 0; k < PACK; k++) {
             Element<T>& curr_el = curr->elements[k];
-            if (curr_el.empty) {
+            if (curr_el.deleted) {
                 continue;
             }
             if (curr_el.value == value) {
                 // Found element to delete, mark it as empty
-                curr_el.empty = true;
+                curr_el.deleted = true;
                 found = true;
                 this->length--;
             }
-            if (!curr_el.empty) {
-                empty_node = false;
+            if (!curr_el.deleted) {
+                deleted_node = false;
             }
         }
-        if (empty_node) {
-            // Whole node is empty
+        if (deleted_node) {
+            // Whole node is deleted
             Node<T>* prev = curr->prev;
             Node<T>* next = curr->next;
             if (prev != nullptr) {
@@ -316,12 +317,9 @@ int List<T>::getLength() const {
 template <class T>
 List<T>::List()
 {
-    Node<T> *_first = new Node<T>();
-    _first->next = nullptr;
-    _first->prev = nullptr;
     this->length = 0;
-    this->first = _first;
-    this->last = _first;
+    this->first = nullptr;
+    this->last = nullptr;
 }
 
 template <class T>
@@ -333,8 +331,6 @@ template <class T>
 void List<T>::add(T&& value)
 {
     if (first == nullptr && this->length == 0) {
-        // Somehow got uninitialized list, maybe all elements have been deleted.
-        // We must initialize it before we start adding to it
         first = new Node<T>();
         first->next = nullptr;
         first->prev = nullptr;
