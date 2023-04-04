@@ -1,13 +1,11 @@
 #include "string.h"
 
-#define _CRT_SECURE_NO_WARNINGS
-
 MyString::MyString(const char *s)
 {
     length = strlen(s);
     capacity = 2*length+1;
     str = new char[capacity];
-    strcpy_s(str, capacity, s);
+    strncpy(str, s, length);
 }
 
 MyString::MyString(int capacity)
@@ -23,7 +21,7 @@ MyString::MyString(const MyString& s)
     length = s.length;
     capacity = s.capacity;
     str = new char[capacity];
-    strcpy_s(str, capacity, s.str);
+    strncpy(str, s.str, length);
 }
 
 // konstruktor przenoszący
@@ -96,8 +94,8 @@ MyString MyString::operator+(const MyString& s2) const
 {
     const MyString& s1 = *this;
     MyString temp(2*(s1.length + s2.length) + 1);
-    strcpy_s(temp.str, temp.capacity, s1.str);
-    strcat_s(temp.str, temp.capacity, s2.str);
+    strncpy(temp.str, s1.str, s1.length);
+    strncat(temp.str, s2.str, s2.length);
     temp.length = s1.length + s2.length;
     return temp;
 }
@@ -107,8 +105,8 @@ MyString MyString::operator+(const char *s2) const
     const MyString& s1 = *this;
     int s2_len = strlen(s2);
     MyString temp(2*(s1.length + s2_len) + 1);
-    strcpy_s(temp.str, temp.capacity, s1.str);
-    strcat_s(temp.str, temp.capacity, s2);
+    strncpy(temp.str, s1.str, s1.length);
+    strncat(temp.str, s2, s2_len);
     temp.length = s2_len + s1.length;
     return temp;
 }
@@ -129,14 +127,15 @@ MyString& MyString::operator+=(const MyString& s2)
 {
     MyString& s1 = *this;
     if (s1.capacity < s1.length + s2.length + 1) {
-        char *temp = new char[2*(s1.length + s2.length) + 1];
-        strcpy_s(temp, 2 * (s1.length + s2.length) + 1, s1.str);
-        strcat_s(temp, 2 * (s1.length + s2.length) + 1, s2.str);
+        int temp_size = 2 * (s1.length + s2.length) + 1;
+        char *temp = new char[temp_size];
+        strncpy(temp, s1.str, s1.length);
+        strncat(temp, s2.str, s2.length);
         delete[] s1.str;
         s1.str = temp;
         s1.capacity = 2*(s1.length + s2.length) + 1;   
     } else {
-        strcat_s(s1.str, s1.capacity, s2.str);
+        strncat(s1.str, s2.str, s2.length);
     }
     s1.length = s1.length + s2.length;
 
@@ -148,14 +147,15 @@ MyString& MyString::operator+=(const char *s2)
     MyString& s1 = *this;
     int s2_len = strlen(s2);
     if (s1.capacity < s1.length + s2_len + 1) {
-        char *temp = new char[2*(s1.length + s2_len) + 1];
-        strcpy_s(temp, 2 * (s1.length + s2_len) + 1, s1.str);
-        strcat_s(temp, 2 * (s1.length + s2_len) + 1, s2);
+        int temp_size = 2 * (s1.length + s2_len) + 1;
+        char *temp = new char[temp_size];
+        strncpy(temp, s1.str, s1.length);
+        strncat(temp, s2, s2_len);
         delete[] s1.str;
         s1.str = temp;
-        s1.capacity = 2*(s1.length + s2_len) + 1;
+        s1.capacity = temp_size;
     } else {
-        strcat_s(s1.str, s1.capacity, s2);
+        strncat(s1.str, s2, s2_len);
     }
     s1.length = s1.length + s2_len;
 
@@ -165,13 +165,14 @@ MyString& MyString::operator+=(const char *s2)
 MyString& MyString::operator+=(char c) {
     MyString& s1 = *this;
     if (s1.capacity < s1.length + 2) {
-        char *temp = new char[2*(s1.length + 1) + 1];
-        strcpy_s(temp, 2 * (s1.length + 1) + 1, s1.str);
+        int temp_size = 2 * (s1.length + 1) + 1;
+        char *temp = new char[temp_size];
+        strncpy(temp, s1.str, s1.length);
         temp[s1.length] = c;
         temp[s1.length + 1] = '\0';
         delete[] s1.str;
         s1.str = temp;
-        s1.capacity = 2*(s1.length + 1) + 1;
+        s1.capacity = temp_size;
     } else {
         s1.str[s1.length] = c;
         s1.str[s1.length + 1] = '\0';
@@ -189,7 +190,7 @@ MyString& MyString::operator=(const MyString& s2)
         s1.str = new char[2*s2.length + 1];
         s1.capacity = 2*s2.length + 1;
     }
-    strcpy_s(s1.str, s1.capacity, s2.str);
+    strncpy(s1.str, s2.str, s2.length);
     s1.length = s2.length;
 
     return *this;
@@ -204,7 +205,7 @@ MyString& MyString::operator=(const char *s2)
         s1.str = new char[2*s2_len + 1];
         s1.capacity = 2*s2_len + 1;
     }
-    strcpy_s(s1.str, s1.capacity, s2);
+    strncpy(s1.str, s2, s2_len);
     s1.length = s2_len;
 
     return *this;
